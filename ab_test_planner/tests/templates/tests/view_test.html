@@ -1,0 +1,48 @@
+{% load bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}A/B Test Planner | View A/B Test{% endblock title %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>{{ test.name }}</h1>
+        <p>{{ test.description }}</p>
+        <p><strong>Start Date:</strong> {{ test.start_date }}</p>
+        <p><strong>End Date:</strong> {{ test.end_date }}</p>
+
+        <h2>Variants</h2>
+        <form method="post" action="{% url 'add_variant' test.id %}">
+            {% csrf_token %}
+            {% bootstrap_form variant_form %}
+            <button type="submit" class="btn btn-primary">Add Variant</button>
+        </form>
+        <ul class="list-group mt-3">
+            {% for variant in test.variants.all %}
+                <li class="list-group-item">
+                    <strong>{{ variant.name }}</strong>: {{ variant.description }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Outcomes</h2>
+        <form method="post" action="{% url 'add_outcome' test.id %}">
+            {% csrf_token %}
+            {% bootstrap_form outcome_form %}
+            <button type="submit" class="btn btn-primary">Add Outcome</button>
+        </form>
+        <ul class="list-group mt-3">
+            {% for outcome in test.outcomes.all %}
+                <li class="list-group-item">
+                    <strong>{{ outcome.metric }}</strong>: Baseline {{ outcome.baseline }}, Goal {{ outcome.goal }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <a href="{% url 'home' %}" class="btn btn-secondary mt-3">Back to Home</a>
+    </div>
+</body>
+</html>
